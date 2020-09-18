@@ -1,4 +1,4 @@
-ws = new WebSocket("ws://localhost:3000")
+ws = new WebSocket("ws://still-tor-75666.herokuapp.com")
 ws.onopen = ()=> console.log("open")
 
 ws.onmessage = (data)=> {console.log("messege");
