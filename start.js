@@ -39,8 +39,8 @@ const sizeMinus = ()=> {
 
 const sizePlus = ()=> {
     const borderLength = border.rightBorder - border.leftBorder
-    if (cheakBorderSize(borderLength/5)){
-        border.leftBorder -= borderLength/5
+    if (cheakBorderSize(borderLength/4)){
+        border.leftBorder -= borderLength/4
         draw()}
 }
 
