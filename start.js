@@ -68,9 +68,8 @@ const loadData = (data)=> {
 
 const updateData = (newData)=>{
     const l = allData.length
-    allData = allData.slice(20, l)
+    allData = allData.slice(15, l)
     allData = allData.concat(newData)
-    //allData = init(allData)
 }
 
 const init = (data) => {
@@ -89,13 +88,13 @@ const dateToHours = ()=> {
 }
 
 const calculateZ = ()=>{
-    interval =Math.floor( (border.rightBorder - border.leftBorder)/5)
+    interval = Math.floor( (border.rightBorder - border.leftBorder)/5)
     points = []
 
     for (let i = 0; i<(border.rightBorder - border.leftBorder); i += 1 ){
         if (data[i] && i%interval===0) points.push(data[i].time)
     }
-    //console.log(p
+    //console.log(p 20
     return points
 
 }
