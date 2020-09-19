@@ -178,6 +178,8 @@ const  draw = () => {
     .tickSizeOuter(0)
     .ticks(6))
 
+    drawLable(svg)
+
     const defs = svg.append("defs");
 
     const gradient = defs.append("linearGradient")
