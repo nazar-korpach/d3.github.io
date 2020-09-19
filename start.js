@@ -1,14 +1,21 @@
 ws = new WebSocket("wss://still-tor-75666.herokuapp.com")
+
+console.log('started')
 ws.onopen = ()=> console.log("open")
+
 
 ws.onmessage = (data)=> {console.log("messege");
     data = JSON.parse(data.data)
     if (allData.length===0) {loadData(data)}
     else {updateData(data)}
     draw()
+    setInterval(() => {
+        ws.send('0')
+    }, 30);
 }
 
-ws.onclose = ()=> console.log("closed")
+ws.onclose = ()=> {console.log("closed"); connection()}
+
 
 const border = {leftBorder: 950, rightBorder:1050, max: 1050, min: 0 }
 
