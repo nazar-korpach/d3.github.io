@@ -184,6 +184,8 @@ const  draw = () => {
 
     const gradient = defs.append("linearGradient")
     .attr('id', 'svgGradient')
+    .attr('x1', '0%')
+    .attr('x2', '0%')
     .attr('y1', '0%')
     .attr('y2', '100%')
 
