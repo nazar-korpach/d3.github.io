@@ -1,4 +1,4 @@
-ws = new WebSocket("wss://still-tor-75666.herokuapp.com")
+ws = new WebSocket("wss://still-tor-75666.herokuapp.com")//ws://localhost:80
 
 console.log('started')
 ws.onopen = ()=> console.log("open")
@@ -66,7 +66,7 @@ const cheakBorder = (k) =>{
 }
 
 const cut = (leftBorder, rightBorder)=>{
-    return allData.slice(leftBorder, rightBorder)
+    return  allData.slice(leftBorder, rightBorder)
 }
 
 const loadData = (data)=> {
@@ -85,11 +85,6 @@ const init = (data) => {
     return data
 }
 
-const chageArrToDateFormat = (dat, ind)=>{
-
-    data[ind].time =  getDateFromHours(data[ind].time)
-}
-
 const dateToHours = ()=> {
     data.forEach((dat, ind)=> {data[ind].time = data[ind].time.toLocaleTimeString() })
 }
@@ -99,7 +94,10 @@ const calculateZ = ()=>{
     points = []
 
     for (let i = 0; i<(border.rightBorder - border.leftBorder); i += 1 ){
-        if (data[i] && i%interval===0) points.push(data[i].time)
+        //console.log(data[i])
+        
+        if (data[i] && i%interval===0) points.push(data[i].time.toLocaleTimeString())
+        //if (data[i].time) console.log(i)
     }
     //console.log(p 20
     return points
@@ -107,9 +105,9 @@ const calculateZ = ()=>{
 }
 
 const  draw = () => {
-
     data = cut(border.leftBorder, border.rightBorder)
     data = init(data)
+    dateInit()
 
     d3.selectAll("svg").remove()
     margin = { top: 20, right: 50, bottom: 50, left: 100 }
@@ -150,15 +148,15 @@ const  draw = () => {
     .tickPadding(10)
     .tickFormat((d) => '')
 
-    const yAxis = d3.axisLeft(y) //origin axisRight
+    yAxis = d3.axisLeft(y) //origin axisRight
     .ticks(6) //origin 5
     .tickSize( width  ) // origin width+7
     .tickPadding( -50 - width) //origin -15 - width
     .tickFormat(d => '' /*d*/ )
 
-    const tAxis = d3.axisTop(x).ticks(0).tickFormat(d => '').tickSizeInner(0).tickSizeOuter(0)
+    tAxis = d3.axisTop(x).ticks(0).tickFormat(d => '').tickSizeOuter(0)
     svg.append('g').call(tAxis)
-    const lAxis = d3.axisLeft(y).ticks(0).tickFormat(d => '').tickSizeInner(0).tickSizeOuter(0)
+    const lAxis = d3.axisLeft(y).ticks(0).tickFormat(d => '').tickSizeOuter(0)
     svg.append('g').call(lAxis)
 
     svg.append('g')
@@ -174,13 +172,11 @@ const  draw = () => {
     svg.append('g')
     .attr('transform', `translate(0 ,${ height })`)// origin 
     .call(d3.axisBottom(z)
-    .tickSizeInner(3)
     .tickSizeOuter(0))
 
     svg.append('g')
-    .attr('transform', `translate( ${ width } , 0)`)// origin (7; 0)
+    .attr('transform', `translate( ${ width } , 0)`)// origin (7; 0) console
     .call(d3.axisRight(y)
-    .tickSizeInner(3)
     .tickSizeOuter(0)
     .ticks(6))
 
@@ -244,8 +240,6 @@ const  draw = () => {
     .attr('class', 'line')
     .attr('stroke', (d) => {return d? 'red': 'blue'} )
 
-    data.forEach(chageArrToDateFormat)
-
     const timeScale = d3.scaleTime()
     .domain([data[0].time, data[data.length-1].time])
 
@@ -259,7 +253,6 @@ const  draw = () => {
 
     rectDrawingAlgorinm(ticks)
 
-    dateToHours()
 }
 
 const drawBottomRect = (num,  time, red) => {
@@ -280,8 +273,6 @@ const drawBottomRect = (num,  time, red) => {
     .attr("height", 15 )
     .attr('fill', red? 'red': 'blue')
 
-    //console.log(time)
-
     const txt = svgContainer.append('text')
     .attr("x", '50%')
     .attr("y", '50%')
@@ -290,12 +281,6 @@ const drawBottomRect = (num,  time, red) => {
     .attr('fill', 'black')
     .text(time.slice(6, 8)==='00'? time.slice(0, 5): time)
 
-}
-
-const getDateFromHours = (time) => {
-    time = time.split(':');
-    let now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...time);            
 }
 
 const rectDrawingAlgorinm = (ticks)=>{
@@ -321,7 +306,7 @@ const rectDrawingAlgorinm = (ticks)=>{
 const drawArrow =  (svg, mode) => {
     width = 920 - margin.left - margin.right
     let color
-    //let dat
+    let dat
     if (mode ==='ask'){
       color = 'green'
       yCord = cords.y(data[data.length-1].avgAsk)
@@ -359,8 +344,6 @@ const drawLable = (svg)=> {
     const ask = data[data.length-1].avgAsk
     let lable = svg
     .append('svg')
-    //.attr('x', 0)
-    //.attr('y', 0)
     .attr('width', 500)
     .attr('height', 20)
 
@@ -387,4 +370,10 @@ const drawLable = (svg)=> {
     .attr('fill', (bid-ask)>0? 'red': 'green')
     .attr('font-size', '14px')
     .text(`${(bid-ask)>0? '+': ''}${(bid-ask).toFixed(8)} (${(bid-ask)>0? '+': ''}${((bid-ask)/bid).toFixed(8)}%)`)
+}
+
+const dateInit = ()=> {
+    data.forEach((element, index)=>{
+        data[index].time = new Date(data[index].time)
+    })
 }
