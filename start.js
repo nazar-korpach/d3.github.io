@@ -321,7 +321,7 @@ const rectDrawingAlgorinm = (ticks)=>{
 const drawArrow =  (svg, mode) => {
     width = 920 - margin.left - margin.right
     let color
-    let dat
+    //let dat
     if (mode ==='ask'){
       color = 'green'
       yCord = cords.y(data[data.length-1].avgAsk)
