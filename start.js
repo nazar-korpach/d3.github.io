@@ -1,7 +1,7 @@
-ws = new WebSocket("wss://still-tor-75666.herokuapp.com")//ws://localhost:80
-
+ws = new WebSocket("wss://still-tor-75666.herokuapp.com")
+let open = false
 console.log('started')
-ws.onopen = ()=> console.log("open")
+ws.onopen = ()=> {console.log("open"); open = true}
 
 
 ws.onmessage = (data)=> {console.log("messege");
@@ -10,11 +10,11 @@ ws.onmessage = (data)=> {console.log("messege");
     else {updateData(data)}
     draw()
     setInterval(() => {
-        ws.send('0')
+        if (open) ws.send('0')
     }, 30);
 }
 
-ws.onclose = ()=> {console.log("closed"); connection()}
+ws.onclose = ()=> {console.log("closed"); open = false}
 
 
 const border = {leftBorder: 950, rightBorder:1050, max: 1050, min: 0 }
@@ -37,14 +37,14 @@ const moveRight = ()=> {
         draw()}
 }
 
-const sizeMinus = ()=> {
+const sizePlus = ()=> {
     const borderLength = border.rightBorder - border.leftBorder
     if (cheakBorderSize(-borderLength/5)){
         border.leftBorder += borderLength/5
         draw()}
 }
 
-const sizePlus = ()=> {
+const sizeMinus = ()=> {
     const borderLength = border.rightBorder - border.leftBorder
     if (cheakBorderSize(borderLength/4)){
         border.leftBorder -= borderLength/4
@@ -92,14 +92,9 @@ const dateToHours = ()=> {
 const calculateZ = ()=>{
     interval = Math.floor( (border.rightBorder - border.leftBorder)/5)
     points = []
-
     for (let i = 0; i<(border.rightBorder - border.leftBorder); i += 1 ){
-        //console.log(data[i])
-        
         if (data[i] && i%interval===0) points.push(data[i].time.toLocaleTimeString())
-        //if (data[i].time) console.log(i)
     }
-    //console.log(p 20
     return points
 
 }
@@ -107,7 +102,7 @@ const calculateZ = ()=>{
 const  draw = () => {
     data = cut(border.leftBorder, border.rightBorder)
     data = init(data)
-    dateInit()
+    dateTransform()
 
     d3.selectAll("svg").remove()
     margin = { top: 20, right: 50, bottom: 50, left: 100 }
@@ -143,16 +138,16 @@ const  draw = () => {
     cords = {x: x, y: y}
 
     const xAxis = d3.axisBottom(z)
-    .ticks(6) // origin (width + 2) / (height + 2) * 5 
-    .tickSize(-height  ) //origin -6
+    .ticks(6) 
+    .tickSize(-height  ) 
     .tickPadding(10)
     .tickFormat((d) => '')
 
-    yAxis = d3.axisLeft(y) //origin axisRight
-    .ticks(6) //origin 5
-    .tickSize( width  ) // origin width+7
-    .tickPadding( -50 - width) //origin -15 - width
-    .tickFormat(d => '' /*d*/ )
+    yAxis = d3.axisLeft(y) 
+    .ticks(6) 
+    .tickSize( width  ) 
+    .tickPadding( -50 - width)
+    .tickFormat(d => '' )
 
     tAxis = d3.axisTop(x).ticks(0).tickFormat(d => '').tickSizeOuter(0)
     svg.append('g').call(tAxis)
@@ -161,21 +156,21 @@ const  draw = () => {
 
     svg.append('g')
     .attr('class', 'axis x-axis')
-    .attr('transform', `translate(0,${ height  })`) //org +6
+    .attr('transform', `translate(0,${ height  })`) 
     .call(xAxis);
 
     svg.append('g')
     .attr('class', 'axis y-axis')
-    .attr('transform', `translate(${ width }, 0)`)// origin (7; 0)
+    .attr('transform', `translate(${ width }, 0)`)
     .call(yAxis)
 
     svg.append('g')
-    .attr('transform', `translate(0 ,${ height })`)// origin 
+    .attr('transform', `translate(0 ,${ height })`)
     .call(d3.axisBottom(z)
     .tickSizeOuter(0))
 
     svg.append('g')
-    .attr('transform', `translate( ${ width } , 0)`)// origin (7; 0) console
+    .attr('transform', `translate( ${ width } , 0)`)
     .call(d3.axisRight(y)
     .tickSizeOuter(0)
     .ticks(6))
@@ -372,7 +367,7 @@ const drawLable = (svg)=> {
     .text(`${(bid-ask)>0? '+': ''}${(bid-ask).toFixed(8)} (${(bid-ask)>0? '+': ''}${((bid-ask)/bid).toFixed(8)}%)`)
 }
 
-const dateInit = ()=> {
+const dateTransform = ()=> {
     data.forEach((element, index)=>{
         data[index].time = new Date(data[index].time)
     })
